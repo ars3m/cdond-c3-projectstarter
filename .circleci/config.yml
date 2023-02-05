@@ -1,4 +1,6 @@
 version: 2.1
+orbs:
+  slack: circleci/slack@4.12.1
 
 commands:
   destroy-environment:
@@ -104,7 +106,24 @@ jobs:
             npm install
             # npm install oauth-sign@^0.9.0
             npm audit fix --audit-level=critical --force
-            # npm audit --audit-level=critical
+            npm audit --audit-level=critical
+      - slack/notify:
+          custom: |
+            {
+              "blocks": [
+                {
+                  "type": "section",
+                  "fields": [
+                    {
+                      "type": "plain_text",
+                      "text": "*The Scan Backend job failed ! Kindly review it*",
+                      "emoji": true
+                    }
+                  ]
+                }
+              ]
+            }
+          event: fail
 
   scan-backend:
     docker:
@@ -118,7 +137,24 @@ jobs:
             npm install
             npm audit fix --audit-level=critical --force
             # npm update mkdirp --depth 2
-            # npm audit --audit-level=critical
+            npm audit --audit-level=critical
+      - slack/notify:
+          custom: |
+            {
+              "blocks": [
+                {
+                  "type": "section",
+                  "fields": [
+                    {
+                      "type": "plain_text",
+                      "text": "*The Scan Frontend job failed ! Kindly review it*",
+                      "emoji": true
+                    }
+                  ]
+                }
+              ]
+            }
+          event: fail
 
   # deploy-infrastructure:
   #   docker:
@@ -297,8 +333,10 @@ workflows:
           requires: [build-backend]
       - scan-backend:
           requires: [build-backend]
+          context: myCIContext
       - scan-frontend:
           requires: [build-frontend]
+          context: myCIContext
       # - deploy-infrastructure:
       #     requires: [test-frontend, test-backend, scan-frontend, scan-backend]
       #     filters:
