@@ -109,7 +109,7 @@ jobs:
             npm install
             # npm install oauth-sign@^0.9.0
             npm audit fix --audit-level=critical --force
-            # npm audit --audit-level=critical
+            npm audit --audit-level=critical
       - slack/notify:
           event: fail
           mentions: '@ici'
@@ -126,8 +126,7 @@ jobs:
             cd backend
             npm install
             npm audit fix --audit-level=critical --force
-            # npm update mkdirp --depth 2
-            # npm audit --audit-level=critical
+            npm audit --audit-level=critical
       - slack/notify:
           event: fail
           mentions: '@ici'
@@ -206,6 +205,7 @@ jobs:
           name: Run migrations
           command: |
             cd backend
+            pwd
             npm install
             npm run build
             npm run migrations > migrations_dump.txt
