@@ -320,7 +320,7 @@ jobs:
 
   smoke-test:
     docker:
-      - image: alpine:latest
+      - image: alpine:3.14
     steps:
       - checkout
       - run:
