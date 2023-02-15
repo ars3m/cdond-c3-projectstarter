@@ -28,6 +28,7 @@ commands:
     steps:
       - run:
           name: Revert migrations
+          when: on_fail
           command: |
             SUCCESS=$(curl --insecure  https://kvdb.io/RTxPzyQhcxFRRtKPKQkeVX/migration_<< parameters.workflow_id >>)
             if(( $SUCCESS==1 ));
@@ -252,19 +253,7 @@ jobs:
             aws s3 cp dist s3://udapeople-${CIRCLE_WORKFLOW_ID:0:7} --recursive
       - destroy-environment:
           workflowID: ${CIRCLE_WORKFLOW_ID:0:7}
-      - run:
-            name: Revert migrations
-            when: on_fail
-            command: |
-                # Example: Memstash.io
-                echo "Reverting migrations..."
-                SUCCESS=$(curl --insecure  https://kvdb.io/RTxPzyQhcxFRRtKPKQkeVX/migration_${CIRCLE_WORKFLOW_ID:0:7})
-                # Logic for reverting the database state
-                if (( $SUCCESS == 1 ));
-                then
-                    cd ~/project/backend
-                    npm run migrations:revert
-                fi
+      - revert-migrations
 
   deploy-backend:
     docker:
@@ -319,19 +308,20 @@ jobs:
             ansible-playbook -i inventory.txt deploy-backend.yml -vvv
       - destroy-environment:
           workflowID: ${CIRCLE_WORKFLOW_ID:0:7}
-      - run:
-            name: Revert migrations
-            when: on_fail
-            command: |
-                # Example: Memstash.io
-                echo "Reverting migrations..."
-                SUCCESS=$(curl --insecure  https://kvdb.io/RTxPzyQhcxFRRtKPKQkeVX/migration_${CIRCLE_WORKFLOW_ID:0:7})
-                # Logic for reverting the database state
-                if (( $SUCCESS == 1 ));
-                then
-                    cd ~/project/backend
-                    npm run migrations:revert
-                fi
+      - revert-migrations
+      # - run:
+      #       name: Revert migrations
+      #       when: on_fail
+      #       command: |
+      #           # Example: Memstash.io
+      #           echo "Reverting migrations..."
+      #           SUCCESS=$(curl --insecure  https://kvdb.io/RTxPzyQhcxFRRtKPKQkeVX/migration_${CIRCLE_WORKFLOW_ID:0:7})
+      #           # Logic for reverting the database state
+      #           if (( $SUCCESS == 1 ));
+      #           then
+      #               cd ~/project/backend
+      #               npm run migrations:revert
+      #           fi
 
   smoke-test:
     docker:
