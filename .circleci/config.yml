@@ -78,7 +78,6 @@ jobs:
       - image: cimg/node:13.8.0
     steps:
       - checkout
-      # Restore from cache
       - run:
           name: Test frontend
           command: |
