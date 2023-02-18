@@ -294,6 +294,7 @@ jobs:
             npm run build
             cd ..
             # Zip the directory
+            # echo "Building"
             tar -C backend -czvf artifact.tar.gz .
             export ANSIBLE_HOST_KEY_CHECKING=false
             mkdir -p ~/project/.circleci/ansible/roles/deploy/files/
