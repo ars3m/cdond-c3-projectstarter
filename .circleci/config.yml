@@ -325,6 +325,7 @@ jobs:
           command: |
             export BACKEND_url=$(aws ec2 describe-instances \
               --query 'Reservations[*].Instances[*].PublicIpAddress' \
+              --filters "Name=tag-value,Values=backend-${CIRCLE_WORKFLOW_ID:0:7}" \
               --output text)
             export API_URL="http://${BACKEND_url}:3030"
             echo "API_URL = ${API_URL}"
