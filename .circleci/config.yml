@@ -31,7 +31,7 @@ commands:
           when: on_fail
           command: |
             SUCCESS=$(curl --insecure  https://kvdb.io/RTxPzyQhcxFRRtKPKQkeVX/migration_<< parameters.workflow_id >>)
-            if (( $SUCCESS == 1 ))
+            if [ $SUCCESS == 1 ]
             then
                 cd ~/project/backend
                 pwd
