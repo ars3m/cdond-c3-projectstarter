@@ -31,11 +31,12 @@ commands:
           when: on_fail
           command: |
             SUCCESS=$(curl --insecure  https://kvdb.io/RTxPzyQhcxFRRtKPKQkeVX/migration_<< parameters.workflow_id >>)
-            if(( $SUCCESS==1 ))
+            if [ $SUCCESS -eq '1' ]
             then
-             cd ~/project/backend
-             npm install
-             npm run migrations:revert
+                cd ~/project/backend
+                pwd
+                npm install
+                npm run migrations:revert
             fi
 
 jobs:
@@ -217,6 +218,7 @@ jobs:
           command: |
             if grep -q "has been executed successfully." ~/project/backend/migrations_dump.txt
             then
+                pwd
                 curl --insecure https://kvdb.io/RTxPzyQhcxFRRtKPKQkeVX/migration_${CIRCLE_WORKFLOW_ID:0:7}  -d '1'
             fi
       - revert-migrations
